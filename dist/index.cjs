@@ -55253,13 +55253,13 @@ const getRawSecrets = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSl
                 expandSecretReferences: true
             }
         });
-        const keyValueSecrets = Object.fromEntries(response.data.secrets.map(secret => [secret.secretKey, secret.secretValue]));
+        const keyValueSecrets = Object.fromEntries(response.data.secrets.map((secret) => [secret.secretKey, secret.secretValue]));
         // process imported secrets
         if (response.data.imports) {
             const imports = response.data.imports;
             for (let i = imports.length - 1; i >= 0; i--) {
                 const importedSecrets = imports[i].secrets;
-                importedSecrets.forEach(secret => {
+                importedSecrets.forEach((secret) => {
                     if (keyValueSecrets[secret.secretKey] === undefined) {
                         keyValueSecrets[secret.secretKey] = secret.secretValue;
                     }
@@ -55278,8 +55278,8 @@ function parseHeadersInput(inputKey) {
     const rawHeadersString = core.getInput(inputKey) || "";
     const headerStrings = rawHeadersString
         .split("\n")
-        .map(line => line.trim())
-        .filter(line => line !== "");
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
     const parsedHeaderStrings = headerStrings.reduce((obj, line) => {
         const seperator = line.indexOf(":");
         const key = line.substring(0, seperator).trim().toLowerCase();
