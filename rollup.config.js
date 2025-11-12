@@ -13,7 +13,7 @@ const config = [
       file: "dist/index.cjs",
       format: "cjs",
       sourcemap: true,
-      banner: "#!/usr/bin/env node",
+      banner: "#!/usr/bin/env node"
     },
     plugins: [
       typescript({
@@ -23,7 +23,7 @@ const config = [
       commonjs(),
       nodeResolve({ preferBuiltins: true }),
       json()
-    ],
+    ]
   },
   {
     input: "src/post.ts",
@@ -33,7 +33,7 @@ const config = [
       file: "dist/post.cjs",
       format: "cjs",
       sourcemap: true,
-      banner: "#!/usr/bin/env node",
+      banner: "#!/usr/bin/env node"
     },
     plugins: [
       typescript({
@@ -43,7 +43,7 @@ const config = [
       commonjs(),
       nodeResolve({ preferBuiltins: true }),
       json()
-    ],
+    ]
   }
 ];
 

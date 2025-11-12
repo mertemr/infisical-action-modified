@@ -7,7 +7,8 @@
 This GitHub Action enables you to import secrets from Infisical—whether hosted in the cloud or self-hosted—directly into your GitHub workflows.
 
 ### 🎉 New Changes in v1.1.0
-- ⬆️ **Node.js 24 LTS**: Updated runtime from v20.7.0 to **v24.11.1** (latest LTS version) 
+
+- ⬆️ **Node.js 24 LTS**: Updated runtime from v20.7.0 to **v24.11.1** (latest LTS version)
 - 🔒 **Security Updates**: Updated all dependencies to address known vulnerabilities
 - 📦 **Package Modernization**: Refreshed npm packages to their latest stable versions
 
@@ -49,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Fetch secrets from Infisical
         uses: mertemr/infisical-action-modified@v1.0.16
         with:
@@ -58,7 +59,7 @@ jobs:
           client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
           project-slug: "my-project"
           env-slug: "production"
-      
+
       - name: Use secrets in deployment
         run: npm run deploy
         env:
@@ -95,6 +96,7 @@ jobs:
 - Set `method` to oidc and configure the `identity-id` input parameter. Optionally, customize the JWT's aud field by setting the `oidc-audience` input parameter.
 - For debugging OIDC configuration issues, you can use GitHub's [actions-oidc-debugger](https://github.com/github/actions-oidc-debugger) tool. This tool helps you inspect the JWT claims and verify they match your configuration.
 - Add `id-token: write` to the permissions for your workflow:
+
 ```
 permissions:
   id-token: write
@@ -170,13 +172,14 @@ Generate `.tfvars` file for Terraform deployments with automatic prefix.
     file-output-path: "/terraform.tfvars"
     file-output-format: "terraform"
     env-prefix: "TF_VAR_"
-    clean: "false"  # Keep file for terraform apply
+    clean: "false" # Keep file for terraform apply
 
 - name: Run Terraform Plan
   run: terraform plan
 ```
 
 Generated file example:
+
 ```hcl
 TF_VAR_database_url = "postgresql://user:pass@host/db"
 TF_VAR_api_key = "sk_prod_abc123"
@@ -226,6 +229,7 @@ Generate executable shell script for sourcing.
 ```
 
 Generated file example:
+
 ```bash
 export DATABASE_URL='postgresql://user:pass@localhost/db'
 export API_KEY='secret_key_value'
@@ -243,8 +247,8 @@ Fetch all secrets from a path including nested directories and imports.
     project-slug: "microservices"
     env-slug: "production"
     secret-path: "/"
-    recursive: "true"        # Include all subdirectories
-    include-imports: "true"  # Include imported secrets
+    recursive: "true" # Include all subdirectories
+    include-imports: "true" # Include imported secrets
     export-type: "file"
     file-output-path: "/.env"
     file-output-format: "dotenv"
@@ -277,7 +281,7 @@ Fetch all secrets from a path including nested directories and imports.
     env-slug: "production"
     export-type: "file"
     file-output-path: "/.env"
-    file-output-format: "dotenv"  # Docker-safe format with double quotes
+    file-output-format: "dotenv" # Docker-safe format with double quotes
 
 - name: Build and Run Docker Container
   run: docker run --env-file .env my-app:latest
@@ -298,7 +302,7 @@ Fetch all secrets from a path including nested directories and imports.
     file-output-path: "/terraform.tfvars"
     file-output-format: "terraform"
     env-prefix: "TF_VAR_"
-    clean: "false"  # Keep file for terraform apply
+    clean: "false" # Keep file for terraform apply
 
 - name: Run Terraform Plan
   run: terraform plan
@@ -355,8 +359,8 @@ Fetch all secrets from a path including nested directories and imports.
     project-slug: "microservices"
     env-slug: "production"
     secret-path: "/"
-    recursive: "true"        # Include all subdirectories
-    include-imports: "true"  # Include imported secrets
+    recursive: "true" # Include all subdirectories
+    include-imports: "true" # Include imported secrets
     export-type: "file"
     file-output-path: "/.env"
 ```
@@ -431,7 +435,7 @@ Fetch all secrets from a path including nested directories and imports.
 
 ### `secret-path`
 
-**Optional**. Source secret path. Defaults to `/`.  Example: `/my-secret-path`.
+**Optional**. Source secret path. Defaults to `/`. Example: `/my-secret-path`.
 
 ### `include-imports`
 
@@ -449,9 +453,9 @@ Example:
 
 ```yaml
 extra-headers: |
-    Example-Header: Header-Value
-    X-Request-Id: 1234567890
-    X-Authentication-Secret: ${{ secrets.AUTH_SECRET }}
+  Example-Header: Header-Value
+  X-Request-Id: 1234567890
+  X-Authentication-Secret: ${{ secrets.AUTH_SECRET }}
 ```
 
 ### `env-prefix`
@@ -484,6 +488,7 @@ Example:
 ### `file-output-format`
 
 **Optional**. File format when export-type is set to `file`. Options:
+
 - `dotenv` (default, **RECOMMENDED for Docker**): Uses double quotes, safe with `docker run --env-file`
 - `dotenv-safe`: Alias for dotenv with enhanced escaping
 - `terraform`: Terraform `.tfvars` format (use with `.tfvars` extension)
@@ -527,14 +532,15 @@ Example:
 
 When your Infisical instance uses an internal Certificate Authority (CA) that isn't trusted by default in GitHub Actions runners, you'll need to configure the action to recognize your custom CA certificate.
 
-
 ## Setup
 
 ### 1. Add your CA certificate to your repository
+
 - Save your CA certificate file (e.g., `ca-certificate.pem`) in your repository root or `.github/` directory
 - Ensure the certificate is in PEM format
 
 ### 2. Configure the GitHub Actions workflow to use it
+
 ```yaml
 jobs:
   your-job-name:
@@ -544,11 +550,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Infisical Secrets
         uses: mertemr/infisical-action-modified@v1.0.16
         with:
           method: "universal"
-          domain: "https://<infisical instance url>"  # Your internal Infisical domain
+          domain: "https://<infisical instance url>" # Your internal Infisical domain
           # rest of the parameters
 ```

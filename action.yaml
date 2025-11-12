@@ -77,8 +77,7 @@ inputs:
     required: false
     default: ""
   clean:
-    description:
-      If set to `true`, the exported .env file will be deleted after processing (clean up). 
+    description: If set to `true`, the exported .env file will be deleted after processing (clean up).
       Defaults to `true`
     required: false
     default: "true"

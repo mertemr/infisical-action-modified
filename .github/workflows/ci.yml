@@ -9,7 +9,7 @@ on:
       - "dist/**"
       - "node_modules/**"
   pull_request:
-    branches: 
+    branches:
       - main
     paths-ignore:
       - "**/*.md"
@@ -38,8 +38,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -53,11 +53,11 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v5
         with:
-            name: build-artifacts
-            path: |
-              dist/**
-              action.yaml
-            if-no-files-found: error
+          name: build-artifacts
+          path: |
+            dist/**
+            action.yaml
+          if-no-files-found: error
 
   update-distribution:
     needs: check-and-build
@@ -87,7 +87,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'Update distribution'
+          commit-message: "Update distribution"
           title: Update distribution
           body: |
             - Updates the distribution for changes on `main` by CI
