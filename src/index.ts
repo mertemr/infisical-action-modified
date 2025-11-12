@@ -29,6 +29,86 @@ function parseHeadersInput(inputKey: string) {
 	return parsedHeaderStrings;
 }
 
+function formatSecretsContent(
+	secrets: Record<string, string>,
+	format: string,
+	prefix: string,
+	suffix: string
+): string {
+	const entries = Object.entries(secrets).map(([key, value]) => {
+		const prefixedKey = `${prefix}${key}${suffix}`;
+		
+		if (format === "terraform") {
+			// Terraform format: key = "value"
+			// Escape double quotes and newlines in the value
+			const escapedValue = value
+				.replace(/\\/g, "\\\\")
+				.replace(/"/g, '\\"')
+				.replace(/\n/g, "\\n")
+				.replace(/\r/g, "\\r")
+				.replace(/\t/g, "\\t");
+			return `${prefixedKey} = "${escapedValue}"`;
+		} else if (format === "raw") {
+			// Raw format: key=value (no quotes)
+			// Escape special shell characters
+			const escapedValue = value.replace(/(['"\$`\\])/g, "\\$1");
+			return `${prefixedKey}=${escapedValue}`;
+		} else if (format === "shell") {
+			// Shell export format: export key='value'
+			// Escape single quotes using '\'' technique
+			const escapedValue = value.replace(/'/g, "'\\''");
+			return `export ${prefixedKey}='${escapedValue}'`;
+		} else if (format === "dotenv" || format === "dotenv-safe") {
+			// DotEnv format with double quotes (Docker/node-dotenv safe)
+			// More reliable than single quotes for Docker --env-file
+			// Escape: backslash, double quotes, newlines, and variable expansion ($)
+			const escapedValue = value
+				.replace(/\\/g, "\\\\")      // Escape backslashes first
+				.replace(/"/g, '\\"')        // Escape double quotes
+				.replace(/\$/g, "\\$")       // Escape $ to prevent variable expansion
+				.replace(/\n/g, "\\n")       // Escape newlines
+				.replace(/\r/g, "\\r");      // Escape carriage returns
+			return `${prefixedKey}="${escapedValue}"`;
+		}
+		
+		// Fallback to dotenv-safe (double quotes) if format is not recognized
+		const escapedValue = value
+			.replace(/\\/g, "\\\\")
+			.replace(/"/g, '\\"')
+			.replace(/\$/g, "\\$")
+			.replace(/\n/g, "\\n")
+			.replace(/\r/g, "\\r");
+		return `${prefixedKey}="${escapedValue}"`;
+	});
+
+	return entries.join("\n");
+}
+
+function getRecommendedFileExtension(format: string): string {
+	switch (format.toLowerCase()) {
+		case "terraform":
+			return ".tfvars";
+		case "shell":
+			return ".sh";
+		case "raw":
+		case "dotenv":
+		default:
+			return ".env";
+	}
+}
+
+function validateAndAdjustPath(filePath: string, format: string): { path: string; warning?: string } {
+	const recommendedExt = getRecommendedFileExtension(format);
+	const hasCorrectExt = filePath.endsWith(recommendedExt);
+	
+	if (!hasCorrectExt) {
+		const warning = `Warning: Format is '${format}' but file extension is not '${recommendedExt}'. Recommended: ${filePath.replace(/\.[^/.]+$/, recommendedExt)}`;
+		return { path: filePath, warning };
+	}
+	
+	return { path: filePath };
+}
+
 const main = async () => {
 	try {
 		const method = core.getInput("method");
@@ -42,6 +122,7 @@ const main = async () => {
 		const secretPath = core.getInput("secret-path");
 		const exportType = core.getInput("export-type");
 		const fileOutputPath = core.getInput("file-output-path");
+		const fileOutputFormat = core.getInput("file-output-format");
 		const shouldIncludeImports = core.getBooleanInput("include-imports");
 		const shouldRecurse = core.getBooleanInput("recursive");
 		const extraHeaders = parseHeadersInput("extra-headers");
@@ -114,16 +195,18 @@ const main = async () => {
 			core.info("Injected secrets as environment variables");
 		} else if (exportType === "file") {
 			// Write the secrets to a file at the specified path
-			const fileContent = Object.keys(keyValueSecrets)
-				.map(key => {
-					const prefixedKey = `${envPrefix}${key}${envSuffix}`;
-					return `${prefixedKey}='${keyValueSecrets[key]}'`;
-				})
-				.join("\n");
+			const fileContent = formatSecretsContent(keyValueSecrets, fileOutputFormat, envPrefix, envSuffix);
 
 			try {
 				const filePath = `${process.env.GITHUB_WORKSPACE}${fileOutputPath}`;
-				core.info(`Exporting secrets to ${filePath}`);
+				
+				// Validate file extension matches format
+				const validation = validateAndAdjustPath(fileOutputPath, fileOutputFormat);
+				if (validation.warning) {
+					core.warning(validation.warning);
+				}
+				
+				core.info(`Exporting secrets to ${filePath} in ${fileOutputFormat} format`);
 				await fs.writeFile(filePath, fileContent);
 				core.info("Successfully exported secrets to file");
 			} catch (err) {

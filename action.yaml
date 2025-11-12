@@ -39,6 +39,19 @@ inputs:
     description: "The path to save the file when export-type is set to `file`"
     required: false
     default: "/.env"
+  file-output-format:
+    description: |
+      File format for export-type `file`. 
+      Options: 
+        - `dotenv` (.env): Double quotes, Docker/node-dotenv compatible, RECOMMENDED for safety
+        - `dotenv-safe` (.env): Alias for dotenv with enhanced escaping
+        - `terraform` (.tfvars): Terraform HCL format
+        - `shell` (.sh): Shell export format
+        - `raw` (.env): Unquoted format, minimal escaping
+      Defaults to `dotenv`. Format and file extension are validated with warnings if they don't match.
+      IMPORTANT: Use double quotes (dotenv) for Docker --env-file to avoid parsing issues.
+    required: false
+    default: "dotenv"
   secret-path:
     description: "Source path, example: `/my-secret-path`"
     required: false
@@ -64,7 +77,9 @@ inputs:
     required: false
     default: ""
   clean:
-    description: "If set to `true`, the exported .env file will be deleted after processing (clean up). Defaults to `true`"
+    description:
+      If set to `true`, the exported .env file will be deleted after processing (clean up). 
+      Defaults to `true`
     required: false
     default: "true"
 runs:
