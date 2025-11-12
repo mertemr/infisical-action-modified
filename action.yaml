@@ -63,6 +63,11 @@ inputs:
     description: "Suffix to add to all exported environment variable names"
     required: false
     default: ""
+  clean:
+    description: "If set to `true`, the exported .env file will be deleted after processing (clean up). Defaults to `true`"
+    required: false
+    default: "true"
 runs:
   using: "node20"
   main: "dist/index.cjs"
+  post: "dist/post.cjs"
