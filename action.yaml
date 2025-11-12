@@ -82,6 +82,6 @@ inputs:
     required: false
     default: "true"
 runs:
-  using: "node20"
+  using: "node24"
   main: "dist/index.cjs"
   post: "dist/post.cjs"
