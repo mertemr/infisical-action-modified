@@ -39,6 +39,19 @@ inputs:
     description: "The path to save the file when export-type is set to `file`"
     required: false
     default: "/.env"
+  file-output-format:
+    description: |
+      File format for export-type `file`. 
+      Options: 
+        - `dotenv` (.env): Double quotes, Docker/node-dotenv compatible, RECOMMENDED for safety
+        - `dotenv-safe` (.env): Alias for dotenv with enhanced escaping
+        - `terraform` (.tfvars): Terraform HCL format
+        - `shell` (.sh): Shell export format
+        - `raw` (.env): Unquoted format, minimal escaping
+      Defaults to `dotenv`. Format and file extension are validated with warnings if they don't match.
+      IMPORTANT: Use double quotes (dotenv) for Docker --env-file to avoid parsing issues.
+    required: false
+    default: "dotenv"
   secret-path:
     description: "Source path, example: `/my-secret-path`"
     required: false
@@ -46,15 +59,30 @@ inputs:
   include-imports:
     description: "If set to `true`, it will include imported secrets"
     required: false
-    default: true
+    default: "true"
   recursive:
     description: "If set to `true`, it will fetch all secrets from the specified base path and all of its subdirectories"
     required: false
-    default: false
+    default: "false"
   extra-headers:
     description: "Extra headers to add to all requests sent to Infisical"
     required: false
     default: ""
+  env-prefix:
+    description: "Prefix to add to all exported environment variable names (e.g., 'TF_VAR_')"
+    required: false
+    default: ""
+  env-suffix:
+    description: "Suffix to add to all exported environment variable names"
+    required: false
+    default: ""
+  clean:
+    description:
+      If set to `true`, the exported .env file will be deleted after processing (clean up). 
+      Defaults to `true`
+    required: false
+    default: "true"
 runs:
   using: "node20"
   main: "dist/index.cjs"
+  post: "dist/post.cjs"

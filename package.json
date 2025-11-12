@@ -1,6 +1,6 @@
 {
   "name": "infisical-secrets-action",
-  "version": "1.0.7",
+  "version": "1.0.16",
   "description": "Github action to load secrets from Infisical",
   "main": "lib/index.js",
   "type": "module",
