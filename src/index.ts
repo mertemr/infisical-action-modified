@@ -45,6 +45,8 @@ const main = async () => {
 		const shouldIncludeImports = core.getBooleanInput("include-imports");
 		const shouldRecurse = core.getBooleanInput("recursive");
 		const extraHeaders = parseHeadersInput("extra-headers");
+		const envPrefix = core.getInput("env-prefix");
+		const envSuffix = core.getInput("env-suffix");
 
 		// get infisical token using credentials
 		let infisicalToken;
@@ -105,14 +107,18 @@ const main = async () => {
 		if (exportType === "env") {
 			// Write the secrets to action ENV
 			Object.entries(keyValueSecrets).forEach(([key, value]) => {
+				const prefixedKey = `${envPrefix}${key}${envSuffix}`;
 				core.setSecret(value);
-				core.exportVariable(key, value);
+				core.exportVariable(prefixedKey, value);
 			});
 			core.info("Injected secrets as environment variables");
 		} else if (exportType === "file") {
 			// Write the secrets to a file at the specified path
 			const fileContent = Object.keys(keyValueSecrets)
-				.map(key => `${key}='${keyValueSecrets[key]}'`)
+				.map(key => {
+					const prefixedKey = `${envPrefix}${key}${envSuffix}`;
+					return `${prefixedKey}='${keyValueSecrets[key]}'`;
+				})
 				.join("\n");
 
 			try {
