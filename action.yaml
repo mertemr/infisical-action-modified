@@ -46,11 +46,11 @@ inputs:
   include-imports:
     description: "If set to `true`, it will include imported secrets"
     required: false
-    default: true
+    default: "true"
   recursive:
     description: "If set to `true`, it will fetch all secrets from the specified base path and all of its subdirectories"
     required: false
-    default: false
+    default: "false"
   extra-headers:
     description: "Extra headers to add to all requests sent to Infisical"
     required: false
