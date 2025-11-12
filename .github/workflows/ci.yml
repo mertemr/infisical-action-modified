@@ -60,14 +60,15 @@ jobs:
             if-no-files-found: error
 
   update-distribution:
+    needs: check-and-build
+
     name: Create pull request to update distribution
 
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: read
+      contents: write
       pull-requests: write
 
     steps:
