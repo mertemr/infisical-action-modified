@@ -1,8 +1,17 @@
 # Infisical Secrets Action
 
+**⚠️ DISCLAIMER:** This is a forked version of the original [Infisical Secrets Action](https://github.com/Infisical/secrets-action) made by [Infisical](https://infisical.com). The modifications include additional features and updates not present in the original repository.
+
+---
+
 This GitHub Action enables you to import secrets from Infisical—whether hosted in the cloud or self-hosted—directly into your GitHub workflows.
 
-### 🎉 New Features in v1.0.16
+### 🎉 New Changes in v1.1.0
+- ⬆️ **Node.js 24 LTS**: Updated runtime from v20.7.0 to **v24.11.1** (latest LTS version) 
+- 🔒 **Security Updates**: Updated all dependencies to address known vulnerabilities
+- 📦 **Package Modernization**: Refreshed npm packages to their latest stable versions
+
+### Features in v1.0.16
 
 - ✨ **Environment Variable Prefix/Suffix**: Add custom prefixes and suffixes to exported environment variables (e.g., `TF_VAR_`, `APP_*_PROD`)
 - 📁 **Multiple File Formats**: Export secrets as `.env`, `.tfvars` (Terraform), `.sh` (Shell), or raw format
