@@ -125,11 +125,11 @@ const main = async () => {
 				const filePath = `${process.env.GITHUB_WORKSPACE}${fileOutputPath}`;
 				core.info(`Exporting secrets to ${filePath}`);
 				await fs.writeFile(filePath, fileContent);
+				core.info("Successfully exported secrets to file");
 			} catch (err) {
 				core.error(`Error writing file: ${(err as Error)?.message}`);
 				throw err;
 			}
-			core.info("Successfully exported secrets to file");
 		}
 	} catch (err) {
 		core.setFailed((err as Error)?.message);
